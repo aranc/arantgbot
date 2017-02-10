@@ -3,6 +3,6 @@ Telegram bot
 usage:
   bot.py - library + when runned as main: simple demo that reverse incoming strings
   demo.py - use library to show how to register commands
-  tg_sendtext.py <msg> - send msg
+  tg_sendmsg.py <msg> - send msg
   tg_sendtext.py <filename> - send text
   tg_sendimage.py <filename> - send image
