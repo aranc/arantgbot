@@ -7,7 +7,7 @@ with open(os.path.expanduser("~/arantgbot.api_token"), 'r') as _file:
     api_token = _file.readline().strip()
 
 with open(os.path.expanduser("~/arantgbot.my_user_id"), 'r') as _file:
-    my_user_id = _file.readline().strip()
+    my_user_id = int(_file.readline().strip())
 
 log = open(os.path.expanduser("~/arantgbot.log"), 'a')
 
@@ -27,8 +27,8 @@ def process_updates_callback(update):
             bot.send_message(user_id, "".join(reversed(msg))).wait()
             return
 
-        cmd = msg.split()[0:1]
-        parameters = "".join(msg.split()[1:])
+        cmd = msg.split()[0]
+        parameters = " ".join(msg.split()[1:])
         if cmd in registered_commands:
             response = registered_commands[cmd](cmd, parameters)
             if isinstance(response, basestring): #Change to str in python3
@@ -36,9 +36,11 @@ def process_updates_callback(update):
         else:
             bot.send_message(user_id, "".join(reversed(msg))).wait()
             
-    except:
+    except Exception as err:
         print "caught exception for update:"
         print update
+        print
+        print err
         print
         return
     

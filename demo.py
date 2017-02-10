@@ -10,6 +10,8 @@ def smile(cmd, parameters):
 def silent(cmd, parameters):
     print "ssshhh"
 
+#todo: ddate/ls
+
 register_command("repeat", repeat)
 register_command("smile", smile)
 register_command("silent", silent)
