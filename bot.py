@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from twx.botapi import TelegramBot, ReplyKeyboardMarkup
 import os
 import time
