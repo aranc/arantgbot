@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from twx.botapi import TelegramBot, ReplyKeyboardMarkup
 import os
+import sys
 import time
 
 with open(os.path.expanduser("~/arantgbot.api_token"), 'r') as _file:
