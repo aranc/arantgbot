@@ -19,7 +19,9 @@ def process_updates_callback(update):
         user_id = update.message.sender.id
         msg = update.message.text.strip()
 
+        print str(user_id) + ": " + msg
         log.write(str(user_id) + ": " + msg + "\n")
+        log.flush()
 
         if user_id != my_user_id:
             bot.send_message(user_id, "".join(reversed(msg))).wait()
