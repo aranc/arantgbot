@@ -30,8 +30,11 @@ def process_updates_callback(update):
         cmd = msg.split()[0:1]
         parameters = "".join(msg.split()[1:])
         if cmd in registered_commands:
-            return registered_commands[cmd](parameters)
-        bot.send_message(user_id, "".join(reversed(msg))).wait()
+            response = registered_commands[cmd](cmd, parameters)
+            if isinstance(response, basestring): #Change to str in python3
+                bot.send_message(user_id, response).wait()
+        else:
+            bot.send_message(user_id, "".join(reversed(msg))).wait()
             
     except:
         print "caught exception for update:"
