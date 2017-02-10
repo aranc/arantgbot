@@ -8,6 +8,8 @@ with open(os.path.expanduser("~/arantgbot.api_token"), 'r') as _file:
 with open(os.path.expanduser("~/arantgbot.my_user_id"), 'r') as _file:
     my_user_id = _file.readline().strip()
 
+log = open(os.path.expanduser("~/arantgbot.log"), 'a')
+
 bot = TelegramBot(api_token)
 offset = None
 
@@ -28,15 +30,18 @@ def process_updates_callback(update):
         user_id = update.message.sender.id
         msg = update.message.text.strip()
 
+        log.write(str(user_id) + ": " + msg + "\n")
+
         if user_id != my_user_id:
-            return print_and_reverse_cb(update)
+            bot.send_message(user_id, "".join(reversed(msg))).wait()
+            return
 
         cmd = msg.split()[0:1]
         parameters = "".join(msg.split()[1:])
-        print "<"+cmd+">: "+"<"+parameters+">"
-        for registered_command in registered_commands:
+        if cmd in registered_commands:
+            return registered_commands[cmd](parameters)
+        bot.send_message(user_id, "".join(reversed(msg))).wait()
             
-
     except:
         print "caught exception for update:"
         print update
