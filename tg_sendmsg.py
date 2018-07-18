@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 from twx.botapi import TelegramBot, ReplyKeyboardMarkup
 import sys
 import os
