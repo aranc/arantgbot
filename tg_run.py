@@ -117,6 +117,9 @@ class TelegramBotWrapper:
             try:
                 self.process_updates()
                 time.sleep(0.1)  # Prevent tight loop
+                if not self.program.process.isalive():
+                    self.process_updates()
+                    break
             except Exception:
                 time.sleep(1)  # Wait a bit before retrying
             except KeyboardInterrupt:
