@@ -102,10 +102,16 @@ class TelegramBotWrapper:
         """Start monitoring program output"""
         def monitor():
             while self.program.process is not None and self.program.process.isalive():
-                output = self.program.get_output()
+                last_message_time = time.time()
+                output = ""
+                while time.time() - last_message_time < 0.1:
+                    _output = self.program.get_output()
+                    if _output is not None:
+                        output += _output
                 if output:
                     try:
                         self.bot.send_message(user_id, output).wait()
+                        last_message_time = time.time()
                     except Exception:
                         pass
 
