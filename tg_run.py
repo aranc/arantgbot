@@ -98,20 +98,29 @@ class TelegramBotWrapper:
             self.process_updates_callback(update)
             self.offset = update.update_id + 1
 
+    def send_message(self, user_id: int, output: str):
+        MAX_LINE_PER_MESSAGES = 5000
+        lines = output.split("\n")
+        lines = lines[-MAX_LINE_PER_MESSAGES:]
+        while len(lines) > 0:
+            chunk = lines[:50]
+            lines = lines[50:]
+            _output = "\n".join(chunk)
+            self.bot.send_message(user_id, _output).wait()
+
     def start_output_monitoring(self, user_id: int):
         """Start monitoring program output"""
         def monitor():
             while self.program.process is not None and self.program.process.isalive():
-                last_message_time = time.time()
+                timestamp = time.time()
                 output = ""
-                while time.time() - last_message_time < 0.1:
+                while time.time() - timestamp < 0.1:
                     _output = self.program.get_output()
                     if _output is not None:
                         output += _output
                 if output:
                     try:
-                        self.bot.send_message(user_id, output).wait()
-                        last_message_time = time.time()
+                        self.send_message(user_id, output)
                     except Exception:
                         pass
 
