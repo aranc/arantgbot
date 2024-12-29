@@ -18,6 +18,7 @@ async def keyboard_handler():
         print(f"{"".join(reversed(user_input))}")
 
 async def main():
+    print("multi\nline\ntest")
     # Create tasks for both handlers
     periodic_task = asyncio.create_task(periodic_handler())
     keyboard_task = asyncio.create_task(keyboard_handler())
