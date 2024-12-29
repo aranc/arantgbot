@@ -18,7 +18,7 @@ class ProgramWrapper:
     def start_program(self):
         """Start the wrapped program using pexpect"""
         try:
-            self.process = pexpect.spawn(self.command, encoding='utf-8', timeout=None)
+            self.process = pexpect.spawn(self.command, encoding='utf-8', timeout=None, echo=False)
             threading.Thread(target=self._monitor_output, daemon=True).start()
             return True
         except Exception:
