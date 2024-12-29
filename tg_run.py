@@ -18,13 +18,10 @@ class ProgramWrapper:
     def start_program(self):
         """Start the wrapped program using pexpect"""
         try:
-            print(f"Starting program: {self.command}")
             self.process = pexpect.spawn(self.command, encoding='utf-8', timeout=None)
-            self.process.logfile_read = sys.stdout  # Debug: See all output
             threading.Thread(target=self._monitor_output, daemon=True).start()
             return True
-        except Exception as e:
-            print(f"Error starting program: {e}")
+        except Exception:
             return False
 
     def _monitor_output(self):
@@ -35,26 +32,20 @@ class ProgramWrapper:
                 if index == 0:  # Got a line
                     line = self.process.before + '\n'
                     if line.strip():  # Only queue non-empty lines
-                        print(f"Program output: {line.strip()}")
                         self.output_queue.put(line)
                 elif index == 1:  # EOF
-                    print("Program ended (EOF)")
                     break
-            except Exception as e:
-                print(f"Error monitoring output: {e}")
+            except Exception:
                 break
 
     def send_input(self, text: str) -> bool:
         """Send input to the program"""
         if self.process is None or not self.process.isalive():
-            print("Cannot send input - process not alive")
             return False
         try:
-            print(f"Sending input to program: {text}")
             self.process.sendline(text)
             return True
-        except Exception as e:
-            print(f"Error sending input: {e}")
+        except Exception:
             return False
 
     def get_output(self):
@@ -84,7 +75,6 @@ class TelegramBotWrapper:
         try:
             user_id = update.message.sender.id
             msg = update.message.text.strip()
-            print(f"Received message from {user_id}: {msg}")
             
             # Only respond to authorized user
             if user_id != self.my_user_id:
@@ -93,14 +83,12 @@ class TelegramBotWrapper:
 
             # Handle regular messages (program input)
             if self.program.process is None or not self.program.process.isalive():
-                print("Program not alive, can't send input")
                 self.bot.send_message(user_id, "Program has ended").wait()
                 return
 
             self.program.send_input(msg)
 
-        except Exception as e:
-            print(f"Error in process_updates_callback: {e}")
+        except Exception:
             return
 
     def process_updates(self):
@@ -117,25 +105,21 @@ class TelegramBotWrapper:
                 output = self.program.get_output()
                 if output:
                     try:
-                        print(f"Sending to Telegram: {output.strip()}")
                         self.bot.send_message(user_id, output).wait()
-                    except Exception as e:
-                        print(f"Error sending to Telegram: {e}")
+                    except Exception:
+                        pass
 
         threading.Thread(target=monitor, daemon=True).start()
 
     def run(self):
         """Main bot loop"""
-        print("Bot started, waiting for messages...")
         while True:
             try:
                 self.process_updates()
                 time.sleep(0.1)  # Prevent tight loop
-            except Exception as e:
-                print(f"Error in main loop: {e}")
+            except Exception:
                 time.sleep(1)  # Wait a bit before retrying
             except KeyboardInterrupt:
-                print("Received KeyboardInterrupt, exiting...")
                 break
 
 def main():
