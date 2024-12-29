@@ -31,7 +31,8 @@ class ProgramWrapper:
                 index = self.process.expect(['\n', pexpect.EOF, pexpect.TIMEOUT], timeout=1)
                 if index == 0:  # Got a line
                     line = self.process.before + '\n'
-                    if line.strip():  # Only queue non-empty lines
+                    # Skip the echo of our own input
+                    if line.strip() and not line.strip().endswith(self.process.after.strip()):
                         self.output_queue.put(line)
                 elif index == 1:  # EOF
                     break
